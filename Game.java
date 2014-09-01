@@ -1,4 +1,4 @@
-
+import java.util.*;
 /**
  * This is the main class for the project, including the game loop and the various methods used for game logic
  * 
@@ -8,7 +8,9 @@
 public class Game
 {
     // instance variables - replace the example below with your own
-    private int x;
+    private int guesses;
+    
+    Scanner console;
 
     /**
      * Constructor for objects of class Game
@@ -16,18 +18,17 @@ public class Game
     public Game()
     {
         // initialise instance variables
-        x = 0;
+        guesses = 0;
+        console = new Scanner(System.in);
     }
 
     /**
-     * An example of a method - replace this comment with your own
+     * This is the menu loop. Not sure whether to do seperate loops, so I'm keeping my options open.
      * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
      */
-    public int sampleMethod(int y)
+    public void menuLoop()
     {
         // put your code here
-        return x + y;
+
     }
 }
