@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Player()
+comment0.text=\r\n\ Constructor\ for\ objects\ of\ class\ Player\r\n
+comment1.params=newName
+comment1.target=void\ setName(java.lang.String)
+comment1.text=\r\n\ Sets\ the\ object's\ "name"\ field,\ validating\ input\ to\ ensure\ the\ user\ only\ typed\ characters\ from\ a-z\r\n\ If\ the\ input\ is\ valid,\ converts\ it\ into\ proper\ title\ case\ for\ later\ use.\ \r\n\ \!\!\!To\ do\ this\ I\ will\ need\ to\ learn\ how\ to\ include\ someone\ else's\ method\:\ WordUtils.capitalizeFully()\ http\://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/text/WordUtils.html\#capitalizeFully%28java.lang.String%29\r\n\ \r\n\ @param\ \ y\ \ \ a\ sample\ parameter\ for\ a\ method\r\n\ @return\ \ \ \ \ the\ sum\ of\ x\ and\ y\ \r\n
+numComments=2
