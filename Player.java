@@ -26,7 +26,7 @@ public class Player
         winnings = 0;
         debug = false;
         if (debug) 
-                System.out.println("Player: new player initialised");
+                System.out.println("Player: new player initialised.");
     }
 
     /**

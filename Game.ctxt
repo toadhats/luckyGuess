@@ -4,5 +4,5 @@ comment0.target=Game()
 comment0.text=\r\n\ Constructor\ for\ objects\ of\ class\ Game\r\n
 comment1.params=
 comment1.target=void\ menuLoop()
-comment1.text=\r\n\ This\ is\ the\ menu\ loop.\ Not\ sure\ whether\ to\ do\ seperate\ loops,\ so\ I'm\ keeping\ my\ options\ open.\r\n\ \r\n
+comment1.text=\r\n\ This\ is\ the\ menu\ loop.\ Not\ sure\ whether\ to\ do\ seperate\ loops/blocks\ for\ the\ various\ elements\r\n\ of\ the\ game,\ so\ I'm\ keeping\ my\ options\ open.\r\n\ \r\n
 numComments=2
