@@ -9,11 +9,11 @@ public class Game
 {
     // instance variables
     private int guesses;
-    private boolean debug;
+    public static boolean debug;
     private boolean inMenu;
     //private boolean inGame;
     Scanner console;    //I feel like I should declare this with the other instance variables,
-                        //but I could be wrong?
+    //but I could be wrong?
 
     /**
      * Constructor for objects of class Game
@@ -24,7 +24,7 @@ public class Game
         guesses = 0;
         inMenu = false;
         //inGame = false; //not using this yet idk
-        debug = false; //set to FALSE before submitting I guess. Or make that secret option to toggle it.
+        Game.debug = false; //set to FALSE before submitting I guess. Or make that secret option to toggle it.
     }
 
     /**
@@ -75,10 +75,11 @@ public class Game
                 errors++;
                 if (errors > 3) {
                     System.out.println("Please stop trying to break me ;-;");}
+                //todo: implement emotions.
                 continue;
             }
         }
-        if (debug) 
+        if (Game.debug) 
             System.out.println("Debug: Exiting menu loop. You entered " + choice);
 
         switch (choice)
@@ -100,11 +101,12 @@ public class Game
             System.out.println("Thanks for playing. Goodbye!");
             break;
             case 420:   //Secret debug option!
-                        this.debug = true;
-                        //Player.debug(); //These generate compile error "non-static method cannot  
-                        //Generator.debug();//be referenced from static context." Why?
-                        System.out.println("Debug mode enabled.");
-                        menuLoop();
+            Game.debug = true; //keeping the debug var in Game only now, it's static so the others should be able to access it?
+            System.out.println("Debug mode enabled.");
+            menuLoop();
+            default:    //Any other numeric input
+            System.out.println("Please enter a number between 1 and 5.");
+            menuLoop();
         }
     }
 

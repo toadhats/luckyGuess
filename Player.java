@@ -12,7 +12,6 @@ public class Player
     private int wins;
     private int losses;
     private int winnings;
-    private boolean debug;
 
     /**
      * Constructor for objects of class Player
@@ -24,8 +23,7 @@ public class Player
         wins = 0;
         losses = 0;
         winnings = 0;
-        debug = false;
-        if (debug) 
+        if (Game.debug) 
                 System.out.println("Player: new player initialised.");
     }
 
@@ -37,34 +35,17 @@ public class Player
     public void addWinnings(int prize)
     {
         winnings = winnings + prize;
-        if (debug) 
+        if (Game.debug) 
                 System.out.println("Player: Added " + prize + "to winnings, new total = " + winnings);
     }
-    
-    /**
-     *Toggles debug mode
-     */
-    public void debug()
-    {
-       if (debug == true)
-       {
-           debug = false;
-           System.out.println("Player: Debug mode disabled.");
-       }
-       else
-       {
-           debug = true;
-           System.out.println("Player: Debug mode enabled.");
-       }
-    }
-    
+        
          /**
      * Returns the player's losses.
      */
     public int getLosses()
     {
         // nothing to see here.
-        if (debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
+        if (Game.debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
             System.out.println("Player: Method getLosses returned: losses = " + losses);
         return losses;
     }
@@ -75,7 +56,7 @@ public class Player
     public String getName()
     {
         // nothing to see here.
-        if (debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
+        if (Game.debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
             System.out.println("Player: Method getName returned: name = " + name);
         return name;
     }
@@ -86,7 +67,7 @@ public class Player
     public int getWins()
     {
         // nothing to see here.
-        if (debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
+        if (Game.debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
             System.out.println("Player: Method getWins returned: wins = " + wins);
         return wins;
     }
@@ -97,7 +78,7 @@ public class Player
     public int getWinnings()
     {
         // nothing to see here.
-        if (debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
+        if (Game.debug) //this is more or less how my half-baked 'debug' system works. A old habit that might not be necessary in BlueJ?
             System.out.println("Player: Method getWinnigs returned: winnings = " + winnings);
         return winnings;
     }
@@ -109,7 +90,7 @@ public class Player
     public void incrementLosses()
     {
         losses = losses + 1;
-        if (debug) 
+        if (Game.debug) 
                 System.out.println("Player: Losses incremented by 1, new total = " + wins);
     }
     
@@ -120,7 +101,7 @@ public class Player
     public void incrementWins()
     {
         wins = wins + 1;
-        if (debug) 
+        if (Game.debug) 
                 System.out.println("Player: Wins incremented by 1, new total = " + wins);
     }
 
@@ -133,7 +114,7 @@ public class Player
         wins = 0;
         losses = 0;
         winnings = 0;
-        if (debug) 
+        if (Game.debug) 
                 System.out.println("Player: Stats reset.");
     }
 
@@ -154,7 +135,7 @@ public class Player
         else                                                            // This wouldn't be necessary if I used the "Matcher" class instead of String.matches, but that requires a bit more code - i'll use it if I end up making a seperate validator
             {                                                           // The ONLY hole in this that I can find is that it is possible to enter just dashes or spaces for the name. Fix this, we're close!
             name = newName; 
-            if (debug) 
+            if (Game.debug) 
                 System.out.println("Player: Name set as " + name);
             }
     }
