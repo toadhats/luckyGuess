@@ -10,11 +10,64 @@ public class Game
     // instance variables
     private int guesses;
     public static boolean debug;
+    private boolean alreadyPlaying;
     private boolean inMenu;
     //private boolean inGame;
     Scanner console;    //I feel like I should declare this with the other instance variables,
     //but I could be wrong?
+    
+    
+    /**
+     * Set up the player (initialise stats and get a name)
+     */
+    public void setupPlayer()
+    {
+        // put your code here
+        inMenu = false;
+        boolean settingUpPlayer = true;
+        //Instantiate a Player?
+        while (settingUpPlayer) 
+        {
+            System.out.println("Are you sure you want to start a new game? Enter Y to confirm, N to go back.");
+            console = new Scanner(System.in);
+            String choice = console.nextLine();
+            choice = choice.toLowerCase();
+            choice = choice;
+            switch(choice.charAt(0))
+            {
+                case 'n':   System.out.println("Ok, returning to the main menu.");
+                            settingUpPlayer = false;
+                            menuLoop();
+                            break;
+                case 'y':   System.out.println("Ok, let's continue");
+                            alreadyPlaying = false;
+                            break;
+                default:    System.out.println("Please enter either 'yes' or 'no'");
+                            continue;
+            }
+            
+            
+        
+        System.out.println("What is your name?");
+        
+        console = new Scanner(System.in);
+        String nameEntry = console.nextLine();
+        
+        // only assigns the name if it passes validation
+        if (nameEntry.matches("(.*)\\d+|[\\W&&[^\\s\\-]]+(.*)") )// The first expression ("\\d+") tests if there is a number anywhere in the string. 
+            System.out.println("That doesn't seem like a real name.");  // The second ("[\\W&&[^\\s\\-]}") tests if there is a 'non word' char other than a space or a '-' - in some implementations of regex this would be enough.
+                                                                        // The (.*)s are there because it was allowing invalid characters if they appeared with valid characters, ie "Name." or "n6ame".
+        else                                                            // This wouldn't be necessary if I used the "Matcher" class instead of String.matches, but that requires a bit more code - i'll use it if I end up making a seperate validator
+            {                                                           // The ONLY hole in this that I can find is that it is possible to enter just dashes or spaces for the name. Fix this, we're close!
+            name = nameEntry; 
+            if (Game.debug) 
+                System.out.println("Player: Name set as " + name);
+            }
+        
+        }
+}
 
+    
     /**
      * Constructor for objects of class Game
      */
@@ -23,6 +76,7 @@ public class Game
         // initialise instance variables
         guesses = 0;
         inMenu = false;
+        alreadyPlaying = false;
         //inGame = false; //not using this yet idk
         Game.debug = false; //set to FALSE before submitting I guess. Or make that secret option to toggle it.
     }
@@ -48,12 +102,13 @@ public class Game
         while (inMenu)
         {
             int errors = 0;
-            //i tried putting 'choice' here but I moved it. Let's just see how that works out for us.
+
             console = new Scanner(System.in); 
             /**it's important to put this inside the loop. If the scanner is instantiated outside 
-             * of the loop it outlives it, which means if there's an input mismatch, 
-             * we don't get a chance to go again with new input, and the existing input
-             * causes a total freakout*/
+             * of the loop it outlives it, which means if there's an input mismatch (which causes the buffer
+             * to remain uncleared) we don't get a chance to go again with new input, and the existing input
+             * causes a total freakout
+               */
 
             System.out.println("Main Menu");
             System.out.println("=================");
