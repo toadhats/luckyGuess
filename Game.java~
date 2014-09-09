@@ -12,60 +12,15 @@ public class Game
     public static boolean debug;
     private boolean alreadyPlaying;
     private boolean inMenu;
-    //private boolean inGame;
-    Scanner console;    //I feel like I should declare this with the other instance variables,
-    //but I could be wrong?
+    private boolean inGame;
+    Player player;
+    Scanner console;    
     
-    
-    /**
-     * Set up the player (initialise stats and get a name)
-     */
-    public void setupPlayer()
+    public static void main(String[] args)
     {
-        // put your code here
-        inMenu = false;
-        boolean settingUpPlayer = true;
-        //Instantiate a Player?
-        while (settingUpPlayer) 
-        {
-            System.out.println("Are you sure you want to start a new game? Enter Y to confirm, N to go back.");
-            console = new Scanner(System.in);
-            String choice = console.nextLine;
-            choice = choice.toLowerCase();
-            choice = choice;
-            switch(choice.charAt(0))
-            {
-                case 'n':   System.out.println("Ok, returning to the main menu.");
-                            settingUpPlayer = false;
-                            menuLoop();
-                            break;
-                case 'y':   System.out.println("Ok, let's continue");
-                            alreadyPlaying = false;
-                            break;
-                default:    System.out.println("Please enter either 'yes' or 'no'");
-                            continue;
-            }
-            
-            
-        
-        System.out.println("What is your name?");
-        
-        console = new Scanner(System.in);
-        String nameEntry = console.nextLine();
-        
-        // only assigns the name if it passes validation
-        if (nameEntry.matches("(.*)\\d+|[\\W&&[^\\s\\-]]+(.*)") )// The first expression ("\\d+") tests if there is a number anywhere in the string. 
-            System.out.println("That doesn't seem like a real name.");  // The second ("[\\W&&[^\\s\\-]}") tests if there is a 'non word' char other than a space or a '-' - in some implementations of regex this would be enough.
-                                                                        // The (.*)s are there because it was allowing invalid characters if they appeared with valid characters, ie "Name." or "n6ame".
-        else                                                            // This wouldn't be necessary if I used the "Matcher" class instead of String.matches, but that requires a bit more code - i'll use it if I end up making a seperate validator
-            {                                                           // The ONLY hole in this that I can find is that it is possible to enter just dashes or spaces for the name. Fix this, we're close!
-            name = nameEntry; 
-            if (Game.debug) 
-                System.out.println("Player: Name set as " + name);
-            }
-        
-        }
-}
+        Game game = new Game();
+        game.start();       
+    }
 
     
     /**
@@ -92,13 +47,6 @@ public class Game
         inMenu = true;
         int choice = 0;
 
-        System.out.println("-----------------");
-        System.out.println("*****************");
-        System.out.println("**~Lucky Guess~**");
-        System.out.println("*****************");
-        System.out.println("-----------------");        
-        System.out.println();
-
         while (inMenu)
         {
             int errors = 0;
@@ -108,8 +56,9 @@ public class Game
              * of the loop it outlives it, which means if there's an input mismatch (which causes the buffer
              * to remain uncleared) we don't get a chance to go again with new input, and the existing input
              * causes a total freakout
-               */
+             */
 
+            System.out.println("=================");
             System.out.println("Main Menu");
             System.out.println("=================");
             System.out.println("1. Choose player");
@@ -118,6 +67,7 @@ public class Game
             System.out.println("4. Display game help");
             System.out.println("5. Exit game.");
             System.out.println("Select an option and press Enter:");
+            System.out.print("> ");
             try 
             {
                 choice = console.nextInt();
@@ -130,39 +80,253 @@ public class Game
                 errors++;
                 if (errors > 3) {
                     System.out.println("Please stop trying to break me ;-;");}
-                //todo: implement emotions.
                 continue;
             }
         }
+        
         if (Game.debug) 
             System.out.println("Debug: Exiting menu loop. You entered " + choice);
 
         switch (choice)
         {
-            case 1:     //Choose Player
-            System.out.println("Debug: 'Choose player' selected, does nothing currently.");
-            break;
+            case 1:     //Choose Player                        
+                        setupPlayer();
+                        break;
             case 2:     //Play a round.        
-            System.out.println("Debug: 'Play a round' selected, does nothing currently.");
-            break;
+                        System.out.println("Debug: 'Play a round' selected, does nothing currently.");
+                        break;
             case 3:     //Show player stats
-            System.out.println("Debug: 'Show player stats' selected, does nothing currently.");
-            break;
+                        System.out.println("Debug: 'Show player stats' selected, does nothing currently.");
+                        break;
             case 4:     //Display game help
-            System.out.println("Debug: 'Display game help' selected, does nothing currently.");
-            break;
+                        showHelp();
+                        break;
             case 5:     //Exit game.
-            inMenu = false;
-            System.out.println("Thanks for playing. Goodbye!");
-            break;
+                        inMenu = false;
+                        System.out.println("Thanks for playing. Goodbye!");
+                        break;
             case 420:   //Secret debug option!
-            Game.debug = true; //keeping the debug var in Game only now, it's static so the others should be able to access it?
-            System.out.println("Debug mode enabled.");
-            menuLoop();
+                        if (Game.debug)
+                        {
+                            Game.debug = false; //keeping the debug var in Game only now, it's static so the others should be able to access it?
+                            System.out.println("Debug mode disabled.");
+                        }
+                        else 
+                        {
+                            Game.debug = true;
+                            System.out.println("Debug mode enabled.");
+                        }
+                        menuLoop();
             default:    //Any other numeric input
-            System.out.println("Please enter a number between 1 and 5.");
-            menuLoop();
+                        System.out.println("Please enter a number between 1 and 5.");
+                        menuLoop();
         }
     }
 
+    /**
+     * The actual game goes here.
+     *
+     * 
+     */
+    public void playGame()
+    {
+        inGame = true;
+        guesses = 3;        
+        int luckyNumber = Generator.generateLucky();
+        int playerGuess;
+        
+        System.out.println("\n_________________________");
+        System.out.println("I'm thinking of a number between 1 - 100.");
+        System.out.println("Can you guess what it is? You have three tries.");
+        while (inGame) //I could also make this loop run until guesses = 0 but i want to do it the other way.
+        {
+            if (guesses > 0)
+            {
+                if (guesses < 3)
+                    System.out.println(guesses +" tries remaining.");
+                System.out.println("Enter a number between 1 - 100:");
+                System.out.print("> ");
+                
+                console = new Scanner(System.in);
+                //First we make sure we actually get a number.
+                try 
+                {
+                    playerGuess = console.nextInt();
+                }
+                catch (java.util.InputMismatchException wrongInput)
+                {
+                    System.out.println("You entered something dumb. That counts as a try btw.");
+                    guesses--;
+                    continue;
+                }
+                //Ok they at least entered a number. Let's quickly make sure it's in the correct range.
+                if (playerGuess < 1 || playerGuess > 100)
+                {
+                    System.out.println("That's not a number between 1 - 100. It is a guess though.");
+                    continue;
+                }
+                //We're doing well here. Now to see how they did.
+                if (playerGuess == luckyNumber)
+                {
+                    player.incrementWins();
+                    player.addWinnings(10);
+                    
+                    System.out.println(".-*-.-*-.-*-.-*-.-*-.-*-.");
+                    System.out.println("         CORRECT!");
+                    System.out.println(".-*-.-*-.-*-.-*-.-*-.-*-.");
+                    System.out.println("\nYou win '$10'.");
+                    if (player.getWinnings() > 10)
+                        System.out.println("That makes for a grand total of " + player.getWinnings() + "imaginary dollars.");
+                    
+                }
+            }
+            else
+            {
+                //you lose idiot
+            }
+        }
+    }
+
+    
+    /**
+     * Wait for the user to press Enter. Worked this out after failing
+     * to figure out how to get java to accept raw keyboard input for 
+     * the old "press any key".
+     * Takes a parameter to determine whether to include the prompt,
+     * or gag it when I want to print some other message.
+     * 
+     * @param echo   Pass true to prompt, false to just wait for input.
+     * 
+     */
+    public void pressEnter(boolean echo)
+    {
+        if (echo)
+            System.out.println("Press Enter to continue.");
+        try {
+            System.in.read();}
+        catch (Exception e) {} //not sure why it wouldn't let me compile without handling this exception.
+    }
+ 
+
+    
+    /**
+     * Prints the game intro banner
+     */
+    public void printIntro()
+    {
+        System.out.println("-----------------------");
+        System.out.println("***********************");
+        System.out.println("**** ~Lucky Guess~ ****");
+        System.out.println("***********************");
+        System.out.println("-----------------------");        
+        System.out.println();
+    }
+    
+    /**
+     * Set up the player (initialise stats and get a name)
+     */
+    public void setupPlayer()
+    {
+        // put your code here
+        inMenu = false;
+        boolean settingUpPlayer = true;
+        //If user has a game in progress, confirm that they want to start over with a new name/stats
+        while (settingUpPlayer) 
+        {
+            if (alreadyPlaying)
+            {
+                System.out.println("Are you sure you want to start a new game? "
+                                 + "You'll lose your imaginary money and meaningless stats.\n"
+                                 + "Enter Y to confirm, N to go back.");
+                console = new Scanner(System.in);
+                String choice = console.nextLine();
+                choice = choice.toLowerCase();
+                choice = choice;
+                switch(choice.charAt(0))
+                {
+                    case 'n':   System.out.println("Ok, returning to the main menu.");
+                                settingUpPlayer = false;
+                                menuLoop();
+                    break;
+                    case 'y':   System.out.println("Ok, let's continue");
+                                alreadyPlaying = false;
+                                break;
+                    default:    System.out.println("Please enter either 'yes' or 'no'");
+                                continue;
+                }
+            }
+            //If we make it to here the user should have indicated that they want to start again
+            //We should also end up here if there isn't a game currently in progress
+            if (debug)
+                System.out.println("Debug: instantiating a new player object");
+
+            player = new Player(); //Making a new instance initialises all variables via the constructor method.
+
+            System.out.println("What is your name?");
+            console = new Scanner(System.in);
+            String nameEntry = console.nextLine();
+
+            /** The if statement below only assigns the name if it passes validation.
+            *The first expression ("\\d+") tests if there is a number anywhere in the string.
+            *The second ("[\\W&&[^\\s\\-]}") tests if there is a 'non word' char other than a space or a '-' 
+            *in some implementations of regex this would be enough, but the one java uses treats numbers as word chars
+            *The (.*)s are there because it was allowing invalid characters if they appeared with valid characters, ie "Name." or "n6ame".
+            *This wouldn't be necessary if I used the "Matcher" class instead of String.matches, but that requires a bit more code.
+            *If I had to validate any other string input like this I'd make a seperate validator method, but I don't, so I won't.
+            */
+            if (nameEntry.matches("(.*)\\d+|[\\W&&[^\\s\\-]]+(.*)") )
+            {
+                System.out.println("That doesn't seem like a real name.");
+                continue; 
+                //putting this here in an attempt to fix that bug where invalid names keep
+                //the loop alive when returning to the menu
+            }
+            else                                                            
+            {                                                           
+                player.setName(nameEntry);
+                if (debug)
+                    System.out.println("Successfully set up the player, returning to the menu");
+                System.out.println("Hello, " + player.getName() + ". Ready to play?");
+                alreadyPlaying = true;
+                settingUpPlayer = false;
+                pressEnter(true);
+                menuLoop();
+            }
+
+        }
+    }
+    
+    /**
+     * Displays the game help. Pretty basic stuff, nothing to see here
+     *
+     */
+    public void showHelp()
+    {
+        System.out.println("__________________________");
+        System.out.println("      How to play:");
+        System.out.println("__________________________");
+        
+        System.out.println("The aim of the game is to pick the number the computer is thinking of.\n"
+                         + "The number can be 1 - 100, and you get three guesses.\n"
+                         + "After each incorrect guess, you'll get a clue - higher or lower.\n"
+                         + "If you guess correctly, you win ten imaginary dollars,\n" 
+                         + "and your win is recorded. Temporarily. If your last guess\n"
+                         + "was close to the mark, you get five imaginary dollars.\n" 
+                         + "Enjoy, or whatever.\n");
+        pressEnter(true);
+        menuLoop();
+    }
+
+    
+    /**
+     * Starts the game. I guess this could be slightly superfluous but whatever man I do what I want
+     *
+     */
+    public void start()
+    {
+        // Prints the game intro banner
+        printIntro();
+        menuLoop();
+    }
+    
 }

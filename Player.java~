@@ -106,12 +106,14 @@ public class Player
     }
 
     /**
-     * Prints the number of wins to the console, accounting for a value of 1.
+     * An example of a method - replace this comment with your own
      *
+     * @param  y   a sample parameter for a method
+     * @return     the sum of x and y
      */
     public void reportWins()
     {
-        if (wins == 1)
+        if (wins = 1)
             System.out.println("You've won one round.");
         else
             System.out.println("You've won " + wins + " rounds.");

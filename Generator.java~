@@ -36,5 +36,4 @@ public class Generator
                 System.out.println("Generator: our lucky number is " + luckyNumber);
         return luckyNumber;
     }
-
 }
