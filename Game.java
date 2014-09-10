@@ -1,6 +1,7 @@
 import java.util.*;
 /**
- * This is the main class for the project, including the game loop and the various methods used for game logic
+ * This is the main class for the project, including the game loop 
+ * and the various methods used for game logic
  * 
  * @author (Jonathan Warner) 
  * @version (a version number or a date)
@@ -32,17 +33,36 @@ public class Game
         inMenu = false;
         alreadyPlaying = false;
         //inGame = false; //not using this yet idk
-        Game.debug = false; //set to FALSE before submitting I guess. Or make that secret option to toggle it.
+        Game.debug = false;
     }
 
     /**
-     * This is the menu loop. Not sure whether to do seperate loops/blocks for the various elements
-     * of the game, so I'm keeping my options open.
+     * Compares a guess to a lucky number and returns a clue for the player.
+     * Did it this way because I'm trying to force my brain into the 'don't repeat yourself' 
+     * OO paradigm or w/e
+     *
+     * @param  playerGuess   the player's guess (int)
+     * @param  luckyNumber   the lucky number (int)
+     * @return     a string containing the clue
+     */
+    public String giveClue(int playerGuess, int luckyNumber)
+    {
+        if (playerGuess > luckyNumber)
+            return "You need to aim a little lower.";
+        else
+            return "You need to think bigger.";
+    }
+
+    
+    /**
+     * This is the menu loop. Each option exits this loop completely, it's 
+     * re-initialised from scratch or whatever each time. I thought this way
+     * would be less headache inducing than a bunch of nested loops.
      * 
      */
     public void menuLoop()
     {
-        // Everything should already have been initialised when the instance was created.
+        // Everything else should already have been initialised when the instance was created.
         inMenu = true;
         int choice = 0;
 
@@ -77,73 +97,94 @@ public class Game
                 choice = 0;
                 System.out.println("Invalid input. Please enter a number from 1 - 5.");
                 errors++;
-                if (errors > 3) {
-                    System.out.println("Please stop trying to break me ;-;");}
+                if (errors > 3) 
+                    System.out.println("Please stop trying to break me ;-;");
                 continue;
             }
         }
-
         if (Game.debug) 
-            System.out.println("Debug: Exiting menu loop. You entered " + choice);
+            System.out.println("\nDebug: Exiting menu loop. You entered " + choice);
+
+        //We have the player selection. Now we enter the switch.
 
         switch (choice)
         {
-            case 1:     //Choose Player                        
+            case 1:     //Choose Player
+            inMenu = false;
             setupPlayer();
-            break;
+            return; //best to use return instead of break here, since I am done with the whole method
             case 2:     //Play a round.        
-            System.out.println("Debug: 'Play a round' selected, does nothing currently.");
-            break;
+            inMenu = false;
+            playGame();
+            return;
             case 3:     //Show player stats
-            System.out.println("Debug: 'Show player stats' selected, does nothing currently.");
-            break;
+            inMenu = false;
+            showStats();
+            return;
             case 4:     //Display game help
+            inMenu = false;
             showHelp();
-            break;
+            return;
             case 5:     //Exit game.
             inMenu = false;
-            System.out.println("Thanks for playing. Goodbye!");
-            break;
+            System.out.println("\nThanks for playing. Goodbye!");
+            return;
             case 420:   //Secret debug option!
             if (Game.debug)
             {
-                Game.debug = false; //keeping the debug var in Game only now, it's static so the others should be able to access it?
-                System.out.println("Debug mode disabled.");
+                Game.debug = false; 
+                System.out.println("\nDebug mode disabled.");
             }
             else 
             {
                 Game.debug = true;
-                System.out.println("Debug mode enabled.");
+                System.out.println("\nDebug mode enabled.");
             }
             menuLoop();
+            break;
             default:    //Any other numeric input
             System.out.println("Please enter a number between 1 and 5.");
-            menuLoop();
+            //menuLoop(); remove!
         }
     }
 
     /**
-     * The actual game goes here.
+     * The actual game goes here. The loop will run for as long
+     * as the player wants to keep playing. This might be horrendously
+     * bad practise but note that I've tried a few different ways
+     * of doing the same thing. They all seem to work, so let me know
+     * which is the best to stick with!
      *
-     * 
      */
     public void playGame()
     {
+        if (!alreadyPlaying)
+        {
+        System.out.println("\nYou haven't created a player yet!");
+        System.out.println("Press Enter to return to the menu\n");
+        pressEnter(false);
+        menuLoop();
+        return; //still don't know if this even works the way I think it does.
+        }
+        
         inGame = true;
         guesses = 3;        
         int luckyNumber = Generator.generateLucky();
-        int playerGuess;
+        int playerGuess = 0;
+        boolean playAgain = false;
 
-        System.out.println("\n_________________________");
+        System.out.println("\n\n_________________________");
         System.out.println("I'm thinking of a number between 1 - 100.");
         System.out.println("Can you guess what it is? You have three tries.");
+        
         while (inGame) //I could also make this loop run until guesses = 0 but i want to do it the other way.
         {
             if (guesses > 0)
             {
                 if (guesses < 3)
                     System.out.println(guesses +" tries remaining.");
-                System.out.println("Enter a number between 1 - 100:");
+                
+                System.out.println("\nEnter a number between 1 - 100:");
                 System.out.print("> ");
 
                 console = new Scanner(System.in);
@@ -151,60 +192,139 @@ public class Game
                 try 
                 {
                     playerGuess = console.nextInt();
+                    console.nextLine();
                 }
                 catch (java.util.InputMismatchException wrongInput)
                 {
-                    System.out.println("You entered something dumb. That counts as a try btw.");
+                    System.out.println("\nYou entered something dumb. That counts as a try btw.");
                     guesses--;
                     continue;
                 }
-                //Ok they at least entered a number. Let's quickly make sure it's in the correct range.
+                //Ok they at least entered a number. Now make sure number is in the correct range.
                 if (playerGuess < 1 || playerGuess > 100)
                 {
-                    System.out.println("That's not a number between 1 - 100. It is a guess though.");
+                    guesses--;
+                    System.out.println("\nThat's not a number between 1 - 100. It is a guess though.");
                     continue;
                 }
-                //We're doing well here. Now to see how they did.
+                //Now to see how they did.
                 if (playerGuess == luckyNumber)
                 {
                     player.incrementWins();
                     player.addWinnings(10);
 
+                    System.out.println();
                     System.out.println(".-*-.-*-.-*-.-*-.-*-.-*-.");
                     System.out.println("         CORRECT!");
                     System.out.println(".-*-.-*-.-*-.-*-.-*-.-*-.");
                     System.out.println("\nYou win '$10'.");
                     if (player.getWinnings() > 10)
-                        System.out.println("That makes for a grand total of " + player.getWinnings() + "imaginary dollars.");
-                    //THIS ISN'T FINISHED!!!!!!!
-                    //Need to ask the player if they want to play again
-                    //If they don't, return them to the menu.
-                    //If they do, break and call this whole method again from the start.
+                        System.out.println("That makes for a grand total of " + player.getWinnings() + " imaginary dollars.");
+                    player.reportWins();
+                    System.out.println();
+                    System.out.println("Would you like to play again?");
+                    //really wish I did not have to wrap this in a loop just to deal with bad input.
+                    boolean stillChoosing = false;
+                    do 
+                    {
+                        System.out.print("> ");
+                        String choice = console.nextLine();
+                        choice = choice.toLowerCase();
+                        choice = choice;
+                        switch(choice.charAt(0))
+                        {
+                            case 'n':   System.out.println("Ok, returning to the main menu.");
+                                        inGame = false;
+                                        menuLoop();
+                                        return; //exits the whole method - we're not playing anymore
+                            case 'y':   System.out.println("Ok!");
+                                        inGame = false;
+                                        playAgain = true;
+                            break; //breaks out of this while loop, so skip ahead to the very end of the method. Just experimenting with this tbh
+                            default:    System.out.println("Please enter either 'yes' or 'no'");
+                                        stillChoosing = true;
+
+                        }
+                    } while (stillChoosing);
                 }
-                else if (playerGuess < (luckyNumber + 5) && playerGuess > (luckyNumber - 5))
+                else if (playerGuess < (luckyNumber + 5) && (playerGuess > (luckyNumber - 5)))
+                //They didnt guess it this time, but they were close. 
                 {
-                    //Close, but no cigar. Subtract a guess.
-                    //Tell the player they're close, and if they have tries remaining give the hint.
-                    //continue;
-                }
-                else
-                {
-                    //Not so close. Deduct a try.
-                    //If they still have any tries left, give them a hint
-                    //continue;
+                    guesses--;
+                    System.out.print("\nClose, but not close enough. ");
+                    //even though it is only used twice, I put 'giveClue' in its own method. 
+                    //Experimenting with using return instead of a println in the other method. Which is better?
+                    System.out.println(giveClue(playerGuess, luckyNumber));
+                    continue;
                 }
 
+                //Not even close.
+
+                else
+                {
+                    guesses--;
+                    System.out.print("\nNope. ");
+                    System.out.println(giveClue(playerGuess, luckyNumber));
+                    continue;
+                }
             }
-            else
+            else //player ends up here when they are out of guesses
             {
-                //you lose idiot
-                //berate the idiot
-                //tell them their worthless score
-                //ask them if they want to keep losing or just give up.
-                //then either restart the game or break to menu
+                player.incrementLosses();
+                System.out.println("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                System.out.println("        YOU LOSE");
+                System.out.println("vvvvvvvvvvvvvvvvvvvvvvvvv");
+                System.out.println("\n\n The lucky number was " + luckyNumber + ".");
+                if (playerGuess < (luckyNumber + 5) && (playerGuess > (luckyNumber - 5)))
+                {
+                    System.out.println("You were so close! You win the $5 minor prize.");
+                    player.addWinnings(5);
+                    System.out.println("\nYou've won $" + player.getWinnings() + " so far.");
+                }
+                
+                player.reportLosses();
+                
+                System.out.println("Would you like to play again?");
+                //really wish I did not have to wrap this in a loop just to deal with bad input.
+                boolean stillChoosing = false;
+                do 
+                {
+                    System.out.print("> ");
+                    String choice = console.nextLine();
+                    choice = choice.toLowerCase();
+                    choice = choice;
+                    try
+                    {
+                        switch(choice.charAt(0))//how do i get around the bug where this breaks if user just presses enter?
+                        {
+                            case 'n':   System.out.println("Ok, returning to the main menu.");
+                                        stillChoosing = false;
+                                        inGame = false;
+                                        menuLoop();
+                                        return; //exits the whole method - we're not playing anymore
+                            case 'y':   System.out.println("Ok!");
+                                        stillChoosing = false;
+                                        inGame = false;
+                                        playAgain = true;
+                            break; //breaks out of this while loop, so skip ahead to the very end of the method. Just experimenting with this tbh
+                            default:    System.out.println("Please enter either 'yes' or 'no'");
+                                        stillChoosing = true;
+    
+                        }
+                    }
+                    catch (Exception somethingDumb)
+                    {
+                        System.out.println("Please enter either 'yes' or 'no'");//Lol created a bug where you can press enter to win
+                        stillChoosing = true;
+                    }
+                } while (stillChoosing);
+
             }
         }
+        if (playAgain)
+            playGame(); //I ended up doing it this way to avoid some 'goto-like' behaviour
     }
+    
 
     /**
      * Wait for the user to press Enter. Worked this out after failing
@@ -219,15 +339,15 @@ public class Game
     public void pressEnter(boolean echo)
     {
         if (echo)
-            System.out.println("Press Enter to continue.");
+            System.out.println("\nPress Enter to continue.");
         try {
             System.in.read();}
-        catch (Exception e) {} //not sure why it wouldn't let me compile without handling this exception.
+        catch (Exception e) {} //not sure why it won't let me compile without handling this exception.
     }
 
-    
     /**
-     * Prints the game intro banner
+     * Prints the game intro banner. Just makes the code cleaner
+     * where it matters really.
      */
     public void printIntro()
     {
@@ -252,7 +372,7 @@ public class Game
         {
             if (alreadyPlaying)
             {
-                System.out.println("Are you sure you want to start a new game? "
+                System.out.println("Are you sure you want to start a new game?\n"
                     + "You'll lose your imaginary money and meaningless stats.\n"
                     + "Enter Y to confirm, N to go back.");
                 console = new Scanner(System.in);
@@ -272,8 +392,8 @@ public class Game
                     continue;
                 }
             }
-            //If we make it to here the user should have indicated that they want to start again
-            //We should also end up here if there isn't a game currently in progress
+            //If we make it to here the user should have confirmed that they want to start over
+
             if (debug)
                 System.out.println("Debug: instantiating a new player object");
 
@@ -319,9 +439,9 @@ public class Game
      */
     public void showHelp()
     {
-        System.out.println("__________________________");
-        System.out.println("      How to play:");
-        System.out.println("__________________________");
+        System.out.println("╔═════════════╗");
+        System.out.println("       How to play:");
+        System.out.println("╚═════════════╝");
 
         System.out.println("The aim of the game is to pick the number the computer is thinking of.\n"
             + "The number can be 1 - 100, and you get three guesses.\n"
@@ -335,6 +455,35 @@ public class Game
     }
 
     /**
+     * Displays stats for the current player. 
+     * Will handle someone choosing this option without creating a player.
+     * 
+     */
+    public void showStats()
+    {
+        if (alreadyPlaying)
+        {
+            System.out.println("\n_________________________");
+            System.out.println("Player stats:");
+            System.out.println("\nWins: " + player.getWins() 
+                             + "\nLosses: " + player.getLosses()
+                             + "\nWin percentage: " + (100 * ((double) (player.getWins()/player.getLosses()))) + "%"
+                             + "\nWinnings: " + player.getWinnings());
+            System.out.println("\nPress Enter to return to the menu\n");
+            pressEnter(false);
+            menuLoop();
+        }
+        else
+        {
+            System.out.println("\nYou haven't created a player yet!");
+            System.out.println("Press Enter to return to the menu\n");
+            pressEnter(false);
+            menuLoop();
+        }
+    }
+
+    
+    /**
      * Starts the game. I guess this could be slightly superfluous but whatever man I do what I want
      *
      */
@@ -346,3 +495,4 @@ public class Game
     }
 
 }
+

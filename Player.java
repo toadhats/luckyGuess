@@ -105,6 +105,18 @@ public class Player
                 System.out.println("Player: Wins incremented by 1, new total = " + wins);
     }
 
+     /**
+     * Prints the number of losses to the console, accounting for a value of 1.
+     *
+     */
+    public void reportLosses()
+    {
+        if (losses == 1)
+            System.out.println("You've lost one round.");
+        else
+            System.out.println("You've lost " + losses + " rounds.");
+    }
+    
     /**
      * Prints the number of wins to the console, accounting for a value of 1.
      *

@@ -105,15 +105,25 @@ public class Player
                 System.out.println("Player: Wins incremented by 1, new total = " + wins);
     }
 
-    /**
-     * An example of a method - replace this comment with your own
+     /**
+     * Prints the number of losses to the console, accounting for a value of 1.
      *
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y
      */
     public void reportWins()
     {
-        if (wins = 1)
+        if (losses == 1)
+            System.out.println("You've lost one round.");
+        else
+            System.out.println("You've lost " + losses + " rounds.");
+    }
+    
+    /**
+     * Prints the number of wins to the console, accounting for a value of 1.
+     *
+     */
+    public void reportWins()
+    {
+        if (wins == 1)
             System.out.println("You've won one round.");
         else
             System.out.println("You've won " + wins + " rounds.");
