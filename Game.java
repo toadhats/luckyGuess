@@ -4,18 +4,19 @@ import java.util.*;
  * and the various methods used for game logic
  * 
  * @author (Jonathan Warner) 
- * @version (a version number or a date)
+ * @version (11/09/2014)
  */
 public class Game
 {
     // instance variables
-    private int guesses;
-    public static boolean debug;
     private boolean alreadyPlaying;
+    Scanner console;
+    public static boolean debug;
+    private int guesses;
     private boolean inMenu;
     private boolean inGame;
     Player player;
-    Scanner console;    
+    
 
     public static void main(String[] args)
     {
@@ -110,48 +111,48 @@ public class Game
         switch (choice)
         {
             case 1:     //Choose Player
-            inMenu = false;
-            setupPlayer();
-            return; //best to use return instead of break here, since I am done with the whole method
+                        inMenu = false;
+                        setupPlayer();
+                        return; //best to use return instead of break here, since I am done with the whole method
             case 2:     //Play a round.        
-            inMenu = false;
-            playGame();
-            return;
+                        inMenu = false;
+                        playGame();
+                        return;
             case 3:     //Show player stats
-            inMenu = false;
-            showStats();
-            return;
+                        inMenu = false;
+                        showStats();
+                        return;
             case 4:     //Display game help
-            inMenu = false;
-            showHelp();
-            return;
+                        inMenu = false;
+                        showHelp();
+                        return;
             case 5:     //Exit game.
-            inMenu = false;
-            System.out.println("\nThanks for playing. Goodbye!");
-            return;
+                        inMenu = false;
+                        System.out.println("\nThanks for playing. Goodbye!");
+                        return;
             case 420:   //Secret debug option!
-            if (Game.debug)
-            {
-                Game.debug = false; 
-                System.out.println("\nDebug mode disabled.");
-            }
-            else 
-            {
-                Game.debug = true;
-                System.out.println("\nDebug mode enabled.");
-            }
-            menuLoop();
-            break;
+                        if (Game.debug)
+                        {
+                            Game.debug = false; 
+                            System.out.println("\nDebug mode disabled.");
+                        }
+                        else 
+                        {
+                            Game.debug = true;
+                            System.out.println("\nDebug mode enabled.");
+                        }
+                        menuLoop();
+                        break;
             default:    //Any other numeric input
-            System.out.println("Please enter a number between 1 and 5.");
-            //menuLoop(); remove!
+                        System.out.println("Please enter a number between 1 and 5.");
+                        //menuLoop(); not sure why I don't need this here but do just above
         }
     }
 
     /**
      * The actual game goes here. The loop will run for as long
      * as the player wants to keep playing. This might be horrendously
-     * bad practise but note that I've tried a few different ways
+     * bad practise but I've tried a few different ways
      * of doing the same thing. They all seem to work, so let me know
      * which is the best to stick with!
      *
@@ -164,7 +165,7 @@ public class Game
         System.out.println("Press Enter to return to the menu\n");
         pressEnter(false);
         menuLoop();
-        return; //still don't know if this even works the way I think it does.
+        return; //still don't know if this works the way I think it does.
         }
         
         inGame = true;
@@ -224,26 +225,35 @@ public class Game
                     System.out.println();
                     System.out.println("Would you like to play again?");
                     //really wish I did not have to wrap this in a loop just to deal with bad input.
+                    //make that a loop AND a try
                     boolean stillChoosing = false;
                     do 
                     {
                         System.out.print("> ");
                         String choice = console.nextLine();
                         choice = choice.toLowerCase();
-                        choice = choice;
-                        switch(choice.charAt(0))
+                        try
+                        {                            
+                            switch(choice.charAt(0)) //crashes if I just press enter. (fixed)
+                            {
+                                case 'n':   System.out.println("Ok, returning to the main menu.");
+                                            inGame = false;
+                                            menuLoop();
+                                            return; //exits the whole method - we're not playing anymore
+                                case 'y':   System.out.println("Ok!");
+                                            inGame = false;
+                                            playAgain = true;
+                                            break;  //skip ahead to the very end of the method where that conditional will fire. 
+                                                    //Just experimenting with this tbh
+                                default:    System.out.println("Please enter either 'yes' or 'no'");
+                                            stillChoosing = true;
+    
+                            }
+                        }
+                        catch (Exception e)
                         {
-                            case 'n':   System.out.println("Ok, returning to the main menu.");
-                                        inGame = false;
-                                        menuLoop();
-                                        return; //exits the whole method - we're not playing anymore
-                            case 'y':   System.out.println("Ok!");
-                                        inGame = false;
-                                        playAgain = true;
-                            break; //breaks out of this while loop, so skip ahead to the very end of the method. Just experimenting with this tbh
-                            default:    System.out.println("Please enter either 'yes' or 'no'");
-                                        stillChoosing = true;
-
+                            System.out.println("Please enter either 'yes' or 'no'");
+                                            stillChoosing = true;
                         }
                     } while (stillChoosing);
                 }
@@ -286,16 +296,18 @@ public class Game
                 
                 System.out.println("Would you like to play again?");
                 //really wish I did not have to wrap this in a loop just to deal with bad input.
+                //Could I have wrapped the whole thing below in its own method? Yes
+                //There are a LOT of things I wrote earlier on that I would refactor/rewrite from scratch.
                 boolean stillChoosing = false;
                 do 
                 {
                     System.out.print("> ");
-                    String choice = console.nextLine();
+                    String choice = console.nextLine(); //can I do choice = nextline OR 0? That would prevent the crash too.
                     choice = choice.toLowerCase();
-                    choice = choice;
+
                     try
                     {
-                        switch(choice.charAt(0))//how do i get around the bug where this breaks if user just presses enter?
+                        switch(choice.charAt(0))//how do i get around the bug where this breaks if user just presses enter? (fixed I think)
                         {
                             case 'n':   System.out.println("Ok, returning to the main menu.");
                                         stillChoosing = false;
@@ -347,7 +359,8 @@ public class Game
 
     /**
      * Prints the game intro banner. Just makes the code cleaner
-     * where it matters really.
+     * up there where it matters really. I should have done more
+     * like this.
      */
     public void printIntro()
     {
@@ -461,13 +474,15 @@ public class Game
      */
     public void showStats()
     {
+        double winPercentage;
         if (alreadyPlaying)
         {
+            winPercentage = 100 * (player.getWins() / player.getLosses());
             System.out.println("\n_________________________");
             System.out.println("Player stats:");
             System.out.println("\nWins: " + player.getWins() 
                              + "\nLosses: " + player.getLosses()
-                             + "\nWin percentage: " + (100 * ((double) (player.getWins()/player.getLosses()))) + "%"
+                             + "\nWin percentage: " + winPercentage + "%"
                              + "\nWinnings: " + player.getWinnings());
             System.out.println("\nPress Enter to return to the menu\n");
             pressEnter(false);
