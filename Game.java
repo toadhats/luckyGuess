@@ -17,7 +17,6 @@ public class Game
     private boolean inGame;
     Player player;
     
-
     public static void main(String[] args)
     {
         Game game = new Game();
@@ -162,7 +161,7 @@ public class Game
         if (!alreadyPlaying)
         {
         System.out.println("\nYou haven't created a player yet!");
-        System.out.println("Press Enter to return to the menu\n");
+        System.out.println("\nPress Enter to return to the menu\n");
         pressEnter(false);
         menuLoop();
         return; //still don't know if this works the way I think it does.
@@ -177,7 +176,7 @@ public class Game
         System.out.println("\n\n_________________________");
         System.out.println("I'm thinking of a number between 1 - 100.");
         System.out.println("Can you guess what it is? You have three tries.");
-        
+        gameLoop:
         while (inGame) //I could also make this loop run until guesses = 0 but i want to do it the other way.
         {
             if (guesses > 0)
@@ -243,7 +242,7 @@ public class Game
                                 case 'y':   System.out.println("Ok!");
                                             inGame = false;
                                             playAgain = true;
-                                            break;  //skip ahead to the very end of the method where that conditional will fire. 
+                                            break gameLoop;  //skip ahead to the very end of the method where that conditional will fire. 
                                                     //Just experimenting with this tbh
                                 default:    System.out.println("Please enter either 'yes' or 'no'");
                                             stillChoosing = true;
@@ -452,9 +451,9 @@ public class Game
      */
     public void showHelp()
     {
-        System.out.println("╔═════════════╗");
-        System.out.println("       How to play:");
-        System.out.println("╚═════════════╝");
+        System.out.println("═════════════");
+        System.out.println(" How to play:");
+        System.out.println("═════════════");
 
         System.out.println("The aim of the game is to pick the number the computer is thinking of.\n"
             + "The number can be 1 - 100, and you get three guesses.\n"
@@ -475,9 +474,10 @@ public class Game
     public void showStats()
     {
         double winPercentage;
+        int totalGames = player.getWins() + player.getLosses();
         if (alreadyPlaying)
         {
-            winPercentage = 100 * (player.getWins() / player.getLosses());
+            winPercentage = 100 * ( (double) player.getWins() / (double) totalGames);
             System.out.println("\n_________________________");
             System.out.println("Player stats:");
             System.out.println("\nWins: " + player.getWins() 
