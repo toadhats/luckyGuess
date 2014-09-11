@@ -41,6 +41,8 @@ public class Player
         
          /**
      * Returns the player's losses.
+     * 
+     * @return int Number of losses
      */
     public int getLosses()
     {
@@ -52,6 +54,8 @@ public class Player
     
     /**
      * Returns the player's name.
+     * 
+     * @return String Player's name.
      */
     public String getName()
     {
@@ -63,6 +67,8 @@ public class Player
     
      /**
      * Returns the player's wins.
+     * 
+     * @return int Number of wins.
      */
     public int getWins()
     {
@@ -74,6 +80,8 @@ public class Player
     
      /**
      * Returns the player's winnings.
+     * 
+     * @return int Amount won so far.
      */
     public int getWinnings()
     {
@@ -129,20 +137,6 @@ public class Player
             System.out.println("You've won " + wins + " rounds.");
     }
 
-    
-    /**
-     * Reset player stats.
-     *
-     */
-    public void resetStats()
-    {
-        wins = 0;
-        losses = 0;
-        winnings = 0;
-        if (Game.debug) 
-                System.out.println("Player: Stats reset.");
-    }
-
     /**
      * Sets the object's "name" field.
      * There's no validation in this method anymore, I moved it to the method in Game that 
@@ -161,6 +155,7 @@ public class Player
      * Converts a string to title case. Based on a StackOverflow answer (http://stackoverflow.com/a/15738441/3959735)
      * 
      * @param string the string to be converted to title case.
+     * @return String The formatted string.
      */
     
     public String titleCase(String string)

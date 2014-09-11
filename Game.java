@@ -150,10 +150,9 @@ public class Game
 
     /**
      * The actual game goes here. The loop will run for as long
-     * as the player wants to keep playing. This might be horrendously
-     * bad practise but I've tried a few different ways
+     * as the player wants to keep playing. I've tried a few different ways
      * of doing the same thing. They all seem to work, so let me know
-     * which is the best to stick with!
+     * which is the best to stick with in future.
      *
      */
     public void playGame()

@@ -10,7 +10,7 @@ public class Generator
 {
     // instance variables - replace the example below with your own
     private static int luckyNumber;  //storing this now in case I think of something to do with it later
-    private static int maxNumber = 100; //used for abstraction purposes, and to allow modification of the game
+    private static final int maxNumber = 100; //used for abstraction purposes, and to allow modification of the game?
 
     /**
      * Constructor for objects of class LuckyNumberGenerator - pretty basic obviously
@@ -21,7 +21,7 @@ public class Generator
     {
         // initialise instance variables
         luckyNumber = 0;
-        maxNumber = 100;
+        //maxNumber = 100;
     }
     
     /**
@@ -36,4 +36,5 @@ public class Generator
                 System.out.println("Generator: our lucky number is " + luckyNumber);
         return luckyNumber;
     }
+
 }
