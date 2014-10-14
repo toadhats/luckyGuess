@@ -13,6 +13,7 @@ public class Game
     Scanner console;
     public static boolean debug;
     private int guesses;
+    private static int MAX_GUESSES = 3;
     private boolean inMenu;
     private boolean inGame;
     Player player;
@@ -167,23 +168,23 @@ public class Game
         }
         
         inGame = true;
-        guesses = 3;        
+        guesses = MAX_GUESSES;        
         int luckyNumber = Generator.generateLucky();
         int playerGuess = 0;
         boolean playAgain = false;
 
         System.out.println("\n\n_________________________");
-        System.out.println("I'm thinking of a number between 1 - 100.");
-        System.out.println("Can you guess what it is? You have three tries.");
+        System.out.println("I'm thinking of a number between 1 - " + Generator.MAX_NUMBER + ".");
+        System.out.println("Can you guess what it is? You have " + MAX_GUESSES + " tries.");
         gameLoop:
         while (inGame) //I could also make this loop run until guesses = 0 but i want to do it the other way.
         {
             if (guesses > 0)
             {
-                if (guesses < 3)
+                if (guesses < MAX_GUESSES)
                     System.out.println(guesses +" tries remaining.");
                 
-                System.out.println("\nEnter a number between 1 - 100:");
+                System.out.println("\nEnter a number between 1 - " + Generator.MAX_NUMBER + ":");
                 System.out.print("> ");
 
                 console = new Scanner(System.in);
@@ -203,7 +204,7 @@ public class Game
                 if (playerGuess < 1 || playerGuess > 100)
                 {
                     guesses--;
-                    System.out.println("\nThat's not a number between 1 - 100. It is a guess though.");
+                    System.out.println("\nThat's not a number between 1 - " + Generator.MAX_NUMBER + ". It is a guess though.");
                     continue;
                 }
                 //Now to see how they did.
@@ -371,6 +372,19 @@ public class Game
     }
 
     /**
+     * A menu to change the game's parameters.
+     *
+     */
+    public void settingsMenu()
+    {
+        // put your code here
+        System.out.println("\n_________________________");
+        System.out.println("Game Settings");
+        //FINISH THIS SOME OTHER TIME
+    }
+
+    
+    /**
      * Set up the player (initialise stats and get a name)
      */
     public void setupPlayer()
@@ -455,7 +469,7 @@ public class Game
         System.out.println("═════════════");
 
         System.out.println("The aim of the game is to pick the number the computer is thinking of.\n"
-            + "The number can be 1 - 100, and you get three guesses.\n"
+            + "The number can be 1 - " + Generator.MAX_NUMBER + ", and you get three guesses.\n"
             + "After each incorrect guess, you'll get a clue - higher or lower.\n"
             + "If you guess correctly, you win ten imaginary dollars,\n" 
             + "and your win is recorded. Temporarily. If your last guess\n"
@@ -473,9 +487,10 @@ public class Game
     public void showStats()
     {
         double winPercentage;
-        int totalGames = player.getWins() + player.getLosses();
+        //where the int declaration used to be. Oops.
         if (alreadyPlaying)
         {
+            int totalGames = player.getWins() + player.getLosses();//Lol i submitted with this outside the block, causing a crash and rendering this if statement useless. Oops.. Oops.
             winPercentage = 100 * ( (double) player.getWins() / (double) totalGames);
             System.out.println("\n_________________________");
             System.out.println("Player stats:");
